@@ -1,0 +1,3 @@
+[submodule "soc12/DeMiSTify"]
+	path = soc12/DeMiSTify
+	url = https://github.com/robinsonb5/DeMiSTify.git
