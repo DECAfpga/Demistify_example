@@ -79,7 +79,11 @@ rm sdram.sv
 # set_global_assignment -name QIP_FILE [file join $::quartus(qip_path) pll.qip]
 # set_global_assignment -name VHDL_FILE [file join $::quartus(qip_path) deca_top.vhd]
 gedit top.qip
-#Change the guest module name "guest_mist" to "soc" and adapt ports accordingly to soc.v top Mist core file
+#edit deca_top.vhd
+# Change the guest module name "guest_mist" to "soc" and adapt ports accordingly to soc.v top Mist core file
+# (optional) comment everything that is not used, like sound.
+# add pll instance to generate the 27 MHz clock to feed the guest soc module
+gedit deca_top.vhd
 cd ..
 
 ########### Compile project
@@ -87,7 +91,6 @@ cd ..
 make
 cd DeMiSTify
 #Create file site.mk in DeMiSTify folder 
-cd DeMiSTify
 cp site.template site.mk
 #Edit site.mk and modify with your PATHs to Quartus and the BOARDS you are porting to
 #(chameleon64 chameleon64v2 de10lite deca neptuno sidi uareloaded mist atlas_cyc...)
