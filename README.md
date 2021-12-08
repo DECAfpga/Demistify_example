@@ -16,7 +16,6 @@ Special thanks to Alastair M. Robinson creator of [DeMiSTify](https://github.com
 **Additional hardware required**:
 
 - PS/2 Keyboard connected to GPIO  (see pinout below)
-- SD card inserted (can be empty)
 
 ##### Versions:
 
@@ -26,7 +25,7 @@ v0.1 initial release
 
 * F12 show/hide OSD 
 
-* The reset button KEY0 resets the controller (so re-initialises the SD card if it's been changed, reloads any autoboot ROM.) The OSD Reset menu item resets the core itself.
+* The reset button KEY0 resets the controller. The OSD Reset menu item resets the core itself.
 
   
 
@@ -37,23 +36,23 @@ For a broader description of possible configurations check https://github.com/DE
 ```sh
 git clone https://github.com/DECAfpga/Demistify_example
 cd Demistify_example
-cd soc12
 git submodule add https://github.com/robinsonb5/DeMiSTify.git
 git submodule update --init 
 cp -r DeMiSTify/templates/deca/ .
 cp -r DeMiSTify/templates/deca_atlas_root/* .
+cp -r DeMiSTify/templates/config.h ./firmware/
 
 ########### Edit files in root folder
 #edit Makefile and change project name (PROJECT=soc12)
 gedit Makefile 
 #edit project.qip and follow file notes
-# set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rgb2ypbpr.sv]
-# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) video.v]
-# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) scandoubler.v]
-# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) user_io.v]
-# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) osd.v]
-# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) soc.v]
-# set_global_assignment -name QIP_FILE [file join $::quartus(qip_path) image.qip]
+# set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) soc12/rgb2ypbpr.sv]
+# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) soc12/video.v]
+# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) soc12/scandoubler.v]
+# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) soc12/user_io.v]
+# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) soc12/osd.v]
+# set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) soc12/soc.v]
+# set_global_assignment -name QIP_FILE [file join $::quartus(qip_path) soc12/image.qip]
 gedit project.qip 
 #edit project_files.rtl (make sure project.qip is listed)
 gedit project_files.rtl
@@ -62,9 +61,9 @@ gedit project_files.rtl
 gedit project_defs.tcl
 #edit demistify_config_pkg.vhd. Usually does not need to be modified, except component guest_mist. In this example we will define the component later in the board_top.vhd so doesn't need to modify this file
 gedit demistify_config_pkg.vhd 
-# edit firmware/config.h and #define / #undef accordingly to your core options. For this simple core example we can leave it as it is by default
+# edit firmware/config.h and #define / #undef accordingly to your core options. From the default settings change just #define CONFIG_WITHOUT_FILESYSTEM  because no SD is needed
 gedit firmware/config.h 
-#edit firmware/overrides.c No ROM or VHD is needed in this core so everything can be removed, but we can leave it as it is if we want to show the OSD at startup 
+#edit firmware/overrides.c No ROM or VHD is needed in this core so remove everything.
 gedit firmware/overrides.c 
 
 ########### Edit files in board folder
@@ -81,7 +80,7 @@ rm sdram.sv
 gedit top.qip
 #edit deca_top.vhd
 # Change the guest module name "guest_mist" to "soc" and adapt ports accordingly to soc.v top Mist core file
-# (optional) comment everything that is not used, like sound.
+# (optional) comment everything that is not used, like sound, HDMI, SDRAM except  DRAM_CS_N, UART.
 # add pll instance to generate the 27 MHz clock to feed the guest soc module
 gedit deca_top.vhd
 cd ..
@@ -132,7 +131,5 @@ For 444 video DAC use all VGA pins. For 333 video DAC connect MSB from addon to 
 
 * Working fine
 
-* ~~HDMI video outputs special resolution so will not work on all monitors.~~ 
-
-
+  
 
